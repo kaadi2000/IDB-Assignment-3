@@ -1,5 +1,9 @@
 package exercise3;
 
+import exercise3.impl.NSMPage;
+import exercise3.impl.PaxPage;
+import exercise3.lib.FixedSizeConverter;
+import exercise3.lib.Page;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
@@ -8,20 +12,16 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import exercise3.impl.NSMPage;
-import exercise3.impl.PaxPage;
-import exercise3.lib.Page;
-import exercise3.lib.FixedSizeConverter;
-
 public class PaxMain {
 
     public static void main(String[] args) throws IOException {
         NSMPage<IntRecord> nsmPage = new NSMPage<>(65, new IntRecordConverter());
         PaxPage<IntRecord> paxPage = new PaxPage<>(65, new IntRecordConverter(), new int[]{4, 4, 4});
 
-        testPage(nsmPage);
+        //testPage(nsmPage);
         // TODO:
-        // testPage(paxPage)
+        
+        testPage(paxPage);
     }
 
     static class IntRecord {

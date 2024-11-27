@@ -3,7 +3,6 @@ package exercise3.impl;
 import exercise3.lib.Block;
 import exercise3.lib.FixedSizeConverter;
 import exercise3.lib.Page;
-
 import java.io.*;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -118,8 +117,22 @@ public class PaxPage<T> implements Page<T> {
      */
     @Override
     public short store(T element) {
-        // TODO
-        return 0;
+        // TODO - DONE
+        short id = nextFreeId();
+        
+
+        for(int c = 0; c < columnSizes.length; c++) {
+            int offset = minipageOffsets[c] + id * columnSizes[c];
+            try {
+                converter.writeColumn(data.dataOutputStream(offset, offset + columnSizes[c]), element, c);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Error while writing column " + c + " to data");
+            }
+        }
+        slotMask[id] = true;
+        sizeRemaining -= getRecordSize();
+        return id;
     }
 
     /**
@@ -127,7 +140,11 @@ public class PaxPage<T> implements Page<T> {
      */
     @Override
     public void delete(short id) {
-        // TODO
+        // TODO -Done
+        if(slotMask[id]){
+            slotMask[id] = false;
+            sizeRemaining += getRecordSize();
+        }
     }
 
     /**
@@ -135,8 +152,21 @@ public class PaxPage<T> implements Page<T> {
      */
     @Override
     public T get(short id) {
-        // TODO
-        return null;
+        // TODO - On it
+        if(!slotMask[id]) return null;
+
+        T result = null;
+        for(int c = 0; c < columnSizes.length; c++){
+            int offset = minipageOffsets[c] + id * columnSizes[c];
+            try {
+                result = converter.readColumn(data.dataInputStream(offset, offset + columnSizes[c]), result, c);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error while trying to read column " + c);
+            }
+        }
+
+        return result;
     }
 
     /**
